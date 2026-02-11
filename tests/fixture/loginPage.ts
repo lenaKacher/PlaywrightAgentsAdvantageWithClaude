@@ -1,5 +1,6 @@
 import { test as base, expect } from '@playwright/test';
 import { Page } from '@playwright/test';
+import { BASE_URL, USERNAME, PASSWORD } from './credentials';
 
 type TestFixtures = {
   loginPage: Page;
@@ -7,10 +8,10 @@ type TestFixtures = {
 
 export const test = base.extend<TestFixtures>({
   loginPage: async ({ page }, use) => {
-    await page.goto('https://www.advantageonlineshopping.com/#/');
+    await page.goto(BASE_URL);
     await page.click('#menuUser');
-    await page.fill('[name="username"]', 'User123');
-    await page.fill('[name="password"]', 'User123');
+    await page.fill('[name="username"]', USERNAME);
+    await page.fill('[name="password"]', PASSWORD);
     await page.click('#sign_in_btn');
     await expect(page.locator('#menuUserLink .hi-user')).toHaveText('User123');
     await use(page);

@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Navigation & General UI', () => {
-  test('Navigate Using Breadcrumbs', async ({ page }) => {
+  test('Navigate Using Breadcrumbs', async ({ loginPage: page }) => {
     // 1. Navigate to a product detail page
     await page.getByRole('link', { name: 'SpeakersCategory', exact: true }).click();
     await page.getByText('Bose Soundlink Bluetooth Speaker III').click();

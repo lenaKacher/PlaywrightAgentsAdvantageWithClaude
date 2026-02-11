@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Navigation & General UI', () => {
-  test('Navigate Using Logo', async ({ page }) => {
+  test('Navigate Using Logo', async ({ loginPage: page }) => {
     // 1. Navigate to any page in the application
     // Navigate to a product page
     await page.getByRole('link', { name: 'SpeakersCategory', exact: true }).click();

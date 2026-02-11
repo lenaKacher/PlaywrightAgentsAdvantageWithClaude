@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Search Functionality', () => {
-  test('Search for Product', async ({ page }) => {
+  test('Search for Product', async ({ loginPage: page }) => {
     // 1. Click on the Search icon in the header
     const searchIcon = page.locator('generic[role="generic"]:has(img[src*="search"])').first();
     const searchBox = page.getByRole('textbox', { name: /Search/i });

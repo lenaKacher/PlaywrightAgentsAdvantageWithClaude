@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Error Handling & Edge Cases', () => {
-  test('Verify Page Load Time', async ({ page }) => {
+  test('Verify Page Load Time', async ({ loginPage: page }) => {
     // 1. Navigate to various pages in the application
     const startTime = Date.now();
     

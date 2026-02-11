@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Product Browsing & Categories', () => {
-  test('View Product Categories', async ({ page }) => {
+  test('View Product Categories', async ({ loginPage: page }) => {
     // 1. Navigate to the home page
     // The page loads with category cards visible (seed navigates here)
     

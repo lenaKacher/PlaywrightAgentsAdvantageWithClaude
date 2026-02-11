@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Contact Form', () => {
-  test('Submit Contact Form with Invalid Email', async ({ page }) => {
+  test('Submit Contact Form with Invalid Email', async ({ loginPage: page }) => {
     // 1. Navigate to Contact Form
     const contactLink = page.getByRole('link', { name: 'CONTACT US' });
     await contactLink.click();

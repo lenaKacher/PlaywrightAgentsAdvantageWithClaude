@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Shopping Cart', () => {
-  test('View Shopping Cart', async ({ page }) => {
+  test('View Shopping Cart', async ({ loginPage: page }) => {
     // 1. Add at least one product to cart
     // Navigate to product and add to cart
     await page.getByRole('link', { name: 'SpeakersCategory', exact: true }).click();

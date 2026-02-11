@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Error Handling & Edge Cases', () => {
-  test('Add Out of Stock Product to Cart', async ({ page }) => {
+  test('Add Out of Stock Product to Cart', async ({ loginPage: page }) => {
     // 1. Navigate to a product marked as 'SOLD OUT'
     // This would require finding a product with SOLD OUT status
     await page.getByRole('link', { name: 'SpeakersCategory', exact: true }).click();

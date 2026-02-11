@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Product Categories Deep Dive', () => {
-  test('Browse Laptops Category', async ({ page }) => {
+  test('Browse Laptops Category', async ({ loginPage: page }) => {
     // 1. Navigate to home page
     // Home page is displayed
 

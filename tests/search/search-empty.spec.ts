@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Search Functionality', () => {
-  test('Search with Empty Query', async ({ page }) => {
+  test('Search with Empty Query', async ({ loginPage: page }) => {
     // 1. Click on the Search icon
     const searchBox = page.getByRole('textbox', { name: /Search/i });
     await searchBox.waitFor({ state: 'visible' });

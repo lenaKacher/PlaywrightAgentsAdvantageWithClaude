@@ -1,10 +1,11 @@
 // spec: specs/test-plan.md
 // seed: tests/seed.spec.ts
 
+import { test as base } from '@playwright/test';
 import { test } from '../fixture/loginPage';
 
 test.describe('Authentication & User Account', () => {
-  test('User Logout', async ({ page }) => {
+  test('User Logout', async ({ loginPage: page }) => {
     // 1. Login with valid credentials (User123/User123) - seed has already done this
     // User is successfully logged in and 'User123' is displayed in the User Menu
 

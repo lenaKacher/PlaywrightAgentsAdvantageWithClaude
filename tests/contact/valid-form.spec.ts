@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Contact Form', () => {
-  test('Fill Contact Form with Valid Data', async ({ page }) => {
+  test('Fill Contact Form with Valid Data', async ({ loginPage: page }) => {
     // 1. Navigate to the Contact Us section/page
     const contactLink = page.getByRole('link', { name: 'CONTACT US' });
     await contactLink.click();

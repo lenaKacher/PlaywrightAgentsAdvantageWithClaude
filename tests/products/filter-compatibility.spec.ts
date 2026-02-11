@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Product Browsing & Categories', () => {
-  test('Filter Products by Compatibility', async ({ page }) => {
+  test('Filter Products by Compatibility', async ({ loginPage: page }) => {
     // 1. Navigate to a category page with filter options
     await page.getByRole('link', { name: 'SpeakersCategory', exact: true }).click();
     

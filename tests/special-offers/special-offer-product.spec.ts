@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Special Offers & Featured Content', () => {
-  test('Click Special Offer Product', async ({ page }) => {
+  test('Click Special Offer Product', async ({ loginPage: page }) => {
     // 1. Navigate to home page
     // Special Offer section is visible
 

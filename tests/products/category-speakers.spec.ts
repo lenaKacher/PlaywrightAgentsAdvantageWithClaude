@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Product Browsing & Categories', () => {
-  test('Navigate to Category - Speakers', async ({ page }) => {
+  test('Navigate to Category - Speakers', async ({ loginPage: page }) => {
     // 1. Navigate to the home page (seed has already done this)
     // The home page is loaded
 

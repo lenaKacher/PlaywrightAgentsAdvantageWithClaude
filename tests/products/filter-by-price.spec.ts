@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Product Browsing & Categories', () => {
-  test('Filter Products by Price', async ({ page }) => {
+  test('Filter Products by Price', async ({ loginPage: page }) => {
     // 1. Navigate to any category page (e.g., Speakers)
     await page.getByRole('link', { name: 'SpeakersCategory', exact: true }).click();
     

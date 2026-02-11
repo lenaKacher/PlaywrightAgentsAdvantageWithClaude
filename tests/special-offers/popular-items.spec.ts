@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Special Offers & Featured Content', () => {
-  test('View Popular Items', async ({ page }) => {
+  test('View Popular Items', async ({ loginPage: page }) => {
     // 1. Navigate to home page
     // Home page loads
 

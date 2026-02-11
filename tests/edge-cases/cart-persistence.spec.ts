@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Error Handling & Edge Cases', () => {
-  test('Cart Persistence After Logout', async ({ page }) => {
+  test('Cart Persistence After Logout', async ({ loginPage: page }) => {
     // 1. Add products to cart while logged in
     await page.getByRole('link', { name: 'SpeakersCategory', exact: true }).click();
     await page.getByText('Bose Soundlink Bluetooth Speaker III').click();

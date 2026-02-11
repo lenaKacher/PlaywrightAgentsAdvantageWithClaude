@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Authentication & User Account', () => {
-  test('View Order History', async ({ page }) => {
+  test('View Order History', async ({ loginPage: page }) => {
     // 1. Login with valid credentials - seed has already done this
     // User is successfully logged in
 

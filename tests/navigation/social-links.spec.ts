@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Navigation & General UI', () => {
-  test('Verify Social Media Links', async ({ page }) => {
+  test('Verify Social Media Links', async ({ loginPage: page }) => {
     // 1. Scroll to the footer section
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
 

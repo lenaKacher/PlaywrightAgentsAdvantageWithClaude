@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Contact Form', () => {
-  test('Access Contact Form', async ({ page }) => {
+  test('Access Contact Form', async ({ loginPage: page }) => {
     // 1. Click on 'CONTACT US' link in the header
     const contactLink = page.getByRole('link', { name: 'CONTACT US' });
     await contactLink.waitFor({ state: 'visible' });

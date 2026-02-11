@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Search Functionality', () => {
-  test('Search Special Characters', async ({ page }) => {
+  test('Search Special Characters', async ({ loginPage: page }) => {
     // 1. Click on Search icon
     const searchBox = page.getByRole('textbox', { name: /Search/i });
     await searchBox.waitFor({ state: 'visible' });

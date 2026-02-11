@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Authentication & User Account', () => {
-  test('Search Orders', async ({ page }) => {
+  test('Search Orders', async ({ loginPage: page }) => {
     // 1. Login and navigate to My Orders page
     await page.getByRole('link', { name: 'UserMenu' }).click();
     await page.getByRole('link', { name: 'My orders' }).waitFor({ state: 'visible' });

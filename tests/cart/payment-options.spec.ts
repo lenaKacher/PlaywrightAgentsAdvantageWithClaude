@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Shopping Cart', () => {
-  test('Verify Payment Options Display', async ({ page }) => {
+  test('Verify Payment Options Display', async ({ loginPage: page }) => {
     // 1. Add products to cart and navigate to Shopping Cart page
     await page.getByRole('link', { name: 'SpeakersCategory', exact: true }).click();
     await page.getByText('Bose Soundlink Bluetooth Speaker III').click();

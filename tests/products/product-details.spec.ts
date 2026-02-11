@@ -4,7 +4,7 @@
 import { test } from '../fixture/loginPage';
 
 test.describe('Product Browsing & Categories', () => {
-  test('View Product Details', async ({ page }) => {
+  test('View Product Details', async ({ loginPage: page }) => {
     // 1. Navigate to Speakers category
     await page.getByRole('link', { name: 'SpeakersCategory', exact: true }).click();
     await page.getByRole('heading', { name: 'SPEAKERS', level: 3 }).waitFor({ state: 'visible' });

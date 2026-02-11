@@ -1,0 +1,27 @@
+{
+  "name": "playwrightagentwithfixturerealworldapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/mcp": "^0.0.61",
+    "@playwright/test": "^1.58.1",
+    "@types/node": "^25.0.10"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/olkacher/PlaywrightAgentContinueAdvantage.git"
+  },
+  "bugs": {
+    "url": "https://github.com/olkacher/PlaywrightAgentContinueAdvantage/issues"
+  },
+  "homepage": "https://github.com/olkacher/PlaywrightAgentContinueAdvantage#readme"
+}

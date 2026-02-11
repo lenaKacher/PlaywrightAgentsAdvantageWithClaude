@@ -9,11 +9,14 @@ type TestFixtures = {
 export const test = base.extend<TestFixtures>({
   loginPage: async ({ page }, use) => {
     await page.goto(BASE_URL);
-    await page.locator('#menuUser').click();
-    await page.locator('[name="username"]').fill(USERNAME);
-    await page.locator('[name="password"]').fill(PASSWORD);
-    await page.locator('#sign_in_btn').click();
-    await expect(page.locator('#menuUserLink .hi-user')).toHaveText('User123');
+    await page.locator('[data-test="nav-sign-in"]').click();
+    await page.locator('[data-test="email"]').click();
+    await page.locator('[data-test="email"]').fill('test.user2@example.com');
+    await page.locator('[data-test="password"]').click();
+    await page.locator('[data-test="password"]').fill('Sobaki2026!');
+    await page.locator('[data-test="login-submit"]').click();
+    await page.locator('[data-test="page-title"]').isVisible();
+    await expect(page.locator('[data-test="page-title"]')).toHaveText('My account');
     await use(page);
   },
 });

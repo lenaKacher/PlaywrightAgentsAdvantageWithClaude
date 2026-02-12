@@ -17,6 +17,8 @@ export const test = base.extend<TestFixtures>({
     await page.locator('[data-test="login-submit"]').click();
     await page.locator('[data-test="page-title"]').isVisible();
     await expect(page.locator('[data-test="page-title"]')).toHaveText('My account');
+    // Navigate back to home so tests start from home page
+    await page.goto(BASE_URL);
     await use(page);
   },
 });

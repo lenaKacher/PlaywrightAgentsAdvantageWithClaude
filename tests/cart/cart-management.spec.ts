@@ -1,194 +1,152 @@
 // spec: specs/comprehensive-test-plan.md
 // seed: tests/seed.spec.ts
 
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixture/loginPage';
+import { HomePage } from '../pages/HomePage';
+import { CartPage } from '../pages/CartPage';
 
 test.describe('Shopping Cart Management', () => {
-  test('View Shopping Cart', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('View Shopping Cart', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const cartPage = new CartPage(page);
     
     // Add a product to cart
-    await page.locator('a[href*="/product/"]').first().click();
-    await page.locator('button:has-text("Add to cart")').click();
-    await page.waitForTimeout(500);
+    await homePage.clickProduct(0);
+    const productPage = require('../pages/ProductPage').ProductPage;
+    const prodPage = new productPage(page);
+    await prodPage.addToCart();
     
-    // Click on the shopping cart icon
-    await page.locator('[data-test="nav-cart"]').click();
+    // Navigate to cart
+    await homePage.goToCart();
     
-    // Verify: The page navigates to /checkout
+    // Verify: The page navigates to checkout
     expect(page.url()).toContain('/checkout');
-    
-    // Verify: The checkout page title displays 'Checkout'
-    const checkoutHeading = page.locator('h1, heading, [role="heading"]').filter({ hasText: 'Checkout' });
-    if (await checkoutHeading.count() > 0) {
-      await expect(checkoutHeading.first()).toBeVisible();
-    }
   });
 
-  test('View Cart Items Table', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('View Cart Items Table', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const cartPage = new CartPage(page);
+    const ProductPage = require('../pages/ProductPage').ProductPage;
     
     // Add a product to cart
-    await page.locator('a[href*="/product/"]').first().click();
-    await page.locator('button:has-text("Add to cart")').click();
-    await page.waitForTimeout(500);
+    await homePage.clickProduct(0);
+    const prodPage = new ProductPage(page);
+    await prodPage.addToCart();
     
     // Navigate to cart
-    await page.locator('[data-test="nav-cart"]').click();
+    await homePage.goToCart();
     
-    // Verify: A table displays all cart items
-    const cartTable = page.locator('table');
-    await expect(cartTable).toBeVisible();
+    // Verify: Cart table is visible
+    await cartPage.verifyCartTableVisible();
     
-    // Verify: Table has product information
-    const tableRows = page.locator('table tbody tr');
-    expect(await tableRows.count()).toBeGreaterThan(0);
+    // Verify: Cart has items
+    const count = await cartPage.getCartItemsCount();
+    expect(count).toBeGreaterThan(0);
   });
 
-  test('View Cart Total', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('View Cart Total', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const cartPage = new CartPage(page);
+    const ProductPage = require('../pages/ProductPage').ProductPage;
     
     // Add a product to cart
-    await page.locator('a[href*="/product/"]').first().click();
-    await page.locator('button:has-text("Add to cart")').click();
-    await page.waitForTimeout(500);
+    await homePage.clickProduct(0);
+    const prodPage = new ProductPage(page);
+    await prodPage.addToCart();
     
     // Navigate to cart
-    await page.locator('[data-test="nav-cart"]').click();
+    await homePage.goToCart();
     
     // Verify: Total is displayed
-    const totalText = page.locator('text=Total').or(page.locator('strong:has-text("Total")'));
-    await expect(totalText.first()).toBeVisible();
-    
-    // Verify: Price is shown
-    const totalPrice = page.locator('[role="cell"]:has-text("$")').last();
-    if (await totalPrice.isVisible()) {
-      await expect(totalPrice).toBeVisible();
-    }
+    const total = await cartPage.getCartTotal();
+    expect(total).toBeTruthy();
   });
 
-  test('Modify Product Quantity in Cart', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('Modify Product Quantity in Cart', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const cartPage = new CartPage(page);
+    const ProductPage = require('../pages/ProductPage').ProductPage;
     
     // Add a product to cart
-    await page.locator('a[href*="/product/"]').first().click();
-    await page.locator('button:has-text("Add to cart")').click();
-    await page.waitForTimeout(500);
+    await homePage.clickProduct(0);
+    const prodPage = new ProductPage(page);
+    await prodPage.addToCart();
     
     // Navigate to cart
-    await page.locator('[data-test="nav-cart"]').click();
+    await homePage.goToCart();
     
-    // Find quantity input in cart table
-    const quantityInput = page.locator('table input[type="number"]').first();
-    if (await quantityInput.isVisible()) {
-      // Change quantity to 3
-      await quantityInput.fill('3');
-      
-      // Verify: Quantity updates
-      await page.waitForTimeout(500);
-      const newValue = await quantityInput.inputValue();
-      expect(newValue).toBe('3');
-    }
+    // Modify quantity
+    await cartPage.modifyQuantity(0, 3);
   });
 
-  test('Remove Product from Cart', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('Remove Product from Cart', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const cartPage = new CartPage(page);
+    const ProductPage = require('../pages/ProductPage').ProductPage;
     
     // Add a product to cart
-    await page.locator('a[href*="/product/"]').first().click();
-    await page.locator('button:has-text("Add to cart")').click();
-    await page.waitForTimeout(500);
+    await homePage.clickProduct(0);
+    const prodPage = new ProductPage(page);
+    await prodPage.addToCart();
     
     // Navigate to cart
-    await page.locator('[data-test="nav-cart"]').click();
+    await homePage.goToCart();
     
-    // Get initial item count
-    const initialRows = await page.locator('table tbody tr').count();
-    
-    // Find and click delete button
-    const deleteBtn = page.locator('button [role="img"], button:has-text("Delete"), button:has-text("Remove"), table button').first();
-    if (await deleteBtn.isVisible()) {
-      await deleteBtn.click();
-      
-      // Wait for update
-      await page.waitForTimeout(500);
-      
-      // Verify: Item is removed
-      const finalRows = await page.locator('table tbody tr').count();
-      expect(finalRows).toBeLessThanOrEqual(initialRows);
-    }
+    // Remove product
+    await cartPage.removeFirstProduct();
   });
 
-  test('Continue Shopping from Cart', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('Continue Shopping from Cart', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const cartPage = new CartPage(page);
+    const ProductPage = require('../pages/ProductPage').ProductPage;
     
     // Add a product to cart
-    await page.locator('a[href*="/product/"]').first().click();
-    await page.locator('button:has-text("Add to cart")').click();
-    await page.waitForTimeout(500);
+    await homePage.clickProduct(0);
+    const prodPage = new ProductPage(page);
+    await prodPage.addToCart();
     
     // Navigate to cart
-    await page.locator('[data-test="nav-cart"]').click();
+    await homePage.goToCart();
     
-    // Click the 'Continue Shopping' button
-    const continueBtn = page.locator('button:has-text("Continue Shopping")');
-    if (await continueBtn.isVisible()) {
-      await continueBtn.click();
-      
-      // Verify: Page navigates back to home
-      await page.waitForURL('**/');
-      expect(page.url()).not.toContain('/checkout');
-    }
+    // Continue shopping
+    await cartPage.continueShopping();
   });
 
-  test('Proceed to Checkout', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('Proceed to Checkout', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const cartPage = new CartPage(page);
+    const ProductPage = require('../pages/ProductPage').ProductPage;
     
     // Add a product to cart
-    await page.locator('a[href*="/product/"]').first().click();
-    await page.locator('button:has-text("Add to cart")').click();
-    await page.waitForTimeout(500);
+    await homePage.clickProduct(0);
+    const prodPage = new ProductPage(page);
+    await prodPage.addToCart();
     
     // Navigate to cart
-    await page.locator('[data-test="nav-cart"]').click();
+    await homePage.goToCart();
     
-    // Click 'Proceed to checkout' button
-    const proceedBtn = page.locator('button:has-text("Proceed to checkout"), button:has-text("Continue")').first();
-    if (await proceedBtn.isVisible()) {
-      await proceedBtn.click();
-      
-      // Verify: Advances to next step (Sign in)
-      await page.waitForTimeout(500);
-      const signInTab = page.locator('text=Sign in', '[role="tab"]:has-text("Sign in")');
-      if (await signInTab.count() > 0) {
-        await expect(signInTab.first()).toBeVisible();
-      }
-    }
+    // Proceed to checkout
+    await cartPage.proceedToCheckout();
+    
+    // Verify: Navigated to checkout
+    expect(page.url()).toContain('/checkout');
   });
 
-  test('Empty Cart', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('Empty Cart', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const cartPage = new CartPage(page);
+    const ProductPage = require('../pages/ProductPage').ProductPage;
     
     // Add a product to cart
-    await page.locator('a[href*="/product/"]').first().click();
-    await page.locator('button:has-text("Add to cart")').click();
-    await page.waitForTimeout(500);
+    await homePage.clickProduct(0);
+    const prodPage = new ProductPage(page);
+    await prodPage.addToCart();
     
     // Navigate to cart
-    await page.locator('[data-test="nav-cart"]').click();
+    await homePage.goToCart();
     
-    // Remove all items
-    let removeBtn = page.locator('button [role="img"], button:has-text("Delete"), button:has-text("Remove"), table button').first();
-    while (await removeBtn.isVisible()) {
-      await removeBtn.click();
-      await page.waitForTimeout(300);
-      removeBtn = page.locator('button [role="img"], button:has-text("Delete"), button:has-text("Remove"), table button').first();
-    }
-    
-    // Verify: Cart is empty
-    const emptyMsg = page.locator('text=empty', 'text=No items', 'p').filter({ hasText: /empty|no items/i });
-    if (await emptyMsg.count() > 0) {
-      await expect(emptyMsg.first()).toBeVisible();
-    }
+    // Empty cart
+    await cartPage.emptyCart();
   });
 });

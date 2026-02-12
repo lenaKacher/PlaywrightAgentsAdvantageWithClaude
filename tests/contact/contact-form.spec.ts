@@ -1,135 +1,62 @@
 // spec: specs/comprehensive-test-plan.md
 // seed: tests/seed.spec.ts
 
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixture/loginPage';
+import { ContactPage } from '../pages/ContactPage';
 
 test.describe('Contact Form', () => {
-  test('View Contact Form', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/contact');
+  test('View Contact Form', async ({ loginPage: page }) => {
+    const contactPage = new ContactPage(page);
+    
+    await contactPage.gotoContact();
     
     // Verify: The page navigates to /contact
     expect(page.url()).toContain('/contact');
     
-    // Verify: The page title shows 'Contact'
-    const contactHeading = page.locator('h1, heading').filter({ hasText: 'Contact' });
-    if (await contactHeading.count() > 0) {
-      await expect(contactHeading.first()).toBeVisible();
-    }
-    
-    // Verify: A contact form is visible with fields
-    const firstNameField = page.locator('input[placeholder*="first name"], input[placeholder*="First"]');
-    const lastNameField = page.locator('input[placeholder*="last name"], input[placeholder*="Last"]');
-    const emailField = page.locator('input[placeholder*="email"], input[type="email"]');
-    
-    if (await firstNameField.count() > 0) {
-      await expect(firstNameField.first()).toBeVisible();
-    }
+    // Verify: Contact form is visible
+    await contactPage.verifyContactFormVisible();
   });
 
-  test('Fill Contact Form with Valid Data', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/contact');
+  test('Fill Contact Form with Valid Data', async ({ loginPage: page }) => {
+    const contactPage = new ContactPage(page);
+    
+    await contactPage.gotoContact();
     
     // Fill in all required fields
-    const firstNameField = page.locator('input[placeholder*="first name"]').or(page.locator('input[placeholder*="First"]')).first();
-    const lastNameField = page.locator('input[placeholder*="last name"]').or(page.locator('input[placeholder*="Last"]')).first();
-    const emailField = page.locator('input[placeholder*="email"], input[type="email"]').first();
-    const subjectSelect = page.locator('select, [role="combobox"]').first();
-    const messageField = page.locator('textarea, input[placeholder*="message"]').first();
+    await contactPage.fillContactForm('John', 'john@example.com', 'This is a test message.');
     
-    if (await firstNameField.isVisible()) {
-      await firstNameField.fill('John');
-    }
-    if (await lastNameField.isVisible()) {
-      await lastNameField.fill('Doe');
-    }
-    if (await emailField.isVisible()) {
-      await emailField.fill('john@example.com');
-    }
-    if (await subjectSelect.isVisible()) {
-      await subjectSelect.selectOption('Customer service').catch(() => {
-        // If not a select, try typing
-      });
-    }
-    if (await messageField.isVisible()) {
-      await messageField.fill('This is a test message.');
-    }
-    
-    // Click the 'Send' button
-    const sendBtn = page.locator('button:has-text("Send")').first();
-    if (await sendBtn.isVisible()) {
-      await sendBtn.click();
-      
-      // Verify: Form is submitted or confirmation message appears
-      await page.waitForTimeout(500);
-    }
+    // Submit the form
+    await contactPage.submitForm();
   });
 
-  test('Submit Contact Form with Missing Fields', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/contact');
+  test('Submit Contact Form with Missing Fields', async ({ loginPage: page }) => {
+    const contactPage = new ContactPage(page);
     
-    // Fill in only some required fields
-    const firstNameField = page.locator('input[placeholder*="first name"]').or(page.locator('input[placeholder*="First"]')).first();
-    const emailField = page.locator('input[placeholder*="email"], input[type="email"]').first();
+    await contactPage.gotoContact();
     
-    if (await firstNameField.isVisible()) {
-      await firstNameField.fill('John');
-    }
-    if (await emailField.isVisible()) {
-      await emailField.fill('john@example.com');
-    }
+    // Try to submit without filling all required fields
+    await contactPage.submitForm();
     
-    // Try to send without filling all required fields
-    const sendBtn = page.locator('button:has-text("Send")').first();
-    if (await sendBtn.isVisible()) {
-      await sendBtn.click();
-      
-      // Verify: Validation errors appear for missing required fields
-      await page.waitForTimeout(500);
-      
-      // Check if page still shows form (validation failed)
-      expect(page.url()).toContain('/contact');
-    }
+    // Verify: Validation errors appear or page still shows form
+    expect(page.url()).toContain('/contact');
   });
 
-  test('Select Contact Subject', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/contact');
+  test('Select Contact Subject', async ({ loginPage: page }) => {
+    const contactPage = new ContactPage(page);
     
-    // Click the 'Subject' dropdown
-    const subjectDropdown = page.locator('select, [role="combobox"]').first();
-    if (await subjectDropdown.isVisible()) {
-      // If it's a select element
-      if (await subjectDropdown.evaluate(el => el.tagName === 'SELECT')) {
-        await subjectDropdown.selectOption('Return');
-      } else {
-        // If it's a custom dropdown
-        await subjectDropdown.click();
-        
-        // Click 'Return' option
-        const returnOption = page.locator('text=Return, [role="option"]:has-text("Return")');
-        if (await returnOption.count() > 0) {
-          await returnOption.first().click();
-        }
-      }
-      
-      await page.waitForTimeout(300);
-    }
+    await contactPage.gotoContact();
+    
+    // Select a subject
+    await contactPage.selectSubject('Return');
   });
 
-  test('Attach File to Contact Form', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/contact');
+  test('Attach File to Contact Form', async ({ loginPage: page }) => {
+    const contactPage = new ContactPage(page);
     
-    // Click the 'Attachment' button
-    const attachmentBtn = page.locator('button:has-text("Attachment"), input[type="file"]').first();
-    if (await attachmentBtn.isVisible()) {
-      // If it's a file input, handle file upload
-      if (await attachmentBtn.evaluate(el => el.tagName === 'INPUT')) {
-        // File upload would require valid file path
-        // Note: Form states 'Only files with the txt extension are allowed'
-      } else {
-        // If it's a button, click it to open file picker
-        await attachmentBtn.click();
-        await page.waitForTimeout(300);
-      }
-    }
+    await contactPage.gotoContact();
+    
+    // Try to attach a file - would need valid file path
+    // This is a placeholder for file upload functionality
+    await contactPage.verifyContactFormVisible();
   });
 });

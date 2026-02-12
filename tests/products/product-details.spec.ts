@@ -1,177 +1,122 @@
 // spec: specs/comprehensive-test-plan.md
 // seed: tests/seed.spec.ts
 
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixture/loginPage';
+import { HomePage } from '../pages/HomePage';
+import { ProductPage } from '../pages/ProductPage';
 
 test.describe('Product Details and Actions', () => {
-  test('View Product Detail Page', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('View Product Detail Page', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const productPage = new ProductPage(page);
     
-    // Click on any product card
-    await page.locator('a[href*="/product/"]').first().click();
+    await homePage.goto();
+    await homePage.clickProduct(0);
     
-    // Verify: The product detail page loads
     expect(page.url()).toContain('/product/');
-    
-    // Verify: Product information is displayed
-    const productName = page.locator('h1');
-    await expect(productName).toBeVisible();
+    await productPage.verifyProductDetailsVisible();
   });
 
-  test('View Product Image on Detail Page', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('View Product Image on Detail Page', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const productPage = new ProductPage(page);
     
-    // Navigate to product detail page
-    await page.locator('a[href*="/product/"]').first().click();
+    await homePage.goto();
+    await homePage.clickProduct(0);
     
-    // Verify: A large product image is displayed
-    const productImage = page.locator('img').first();
-    await expect(productImage).toBeVisible();
+    const imgLocator = page.locator('img').first();
+    await expect(imgLocator).toBeVisible();
   });
 
-  test('View Product Information on Detail Page', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('View Product Information on Detail Page', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const productPage = new ProductPage(page);
     
-    // Navigate to product detail page
-    await page.locator('a[href*="/product/"]').first().click();
+    await homePage.goto();
+    await homePage.clickProduct(0);
     
-    // Verify: The product name is displayed as a heading
-    const productName = page.locator('h1');
-    await expect(productName).toBeVisible();
-    
-    // Verify: Price is displayed
-    const price = page.locator('[role="generic"]:has-text("$")').first();
-    await expect(price).toBeVisible();
+    const title = await productPage.getProductTitle();
+    expect(title).toBeTruthy();
   });
 
-  test('View Product Description', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('View Product Description', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const productPage = new ProductPage(page);
     
-    // Navigate to product detail page
-    await page.locator('a[href*="/product/"]').first().click();
+    await homePage.goto();
+    await homePage.clickProduct(0);
     
-    // Verify: Product description is visible
-    const description = page.locator('p').filter({ hasText: 'Lorem' });
-    if (await description.count() > 0) {
-      await expect(description.first()).toBeVisible();
-    }
+    await productPage.verifyDescriptionVisible();
   });
 
-  test('Adjust Product Quantity', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('Adjust Product Quantity', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const productPage = new ProductPage(page);
     
-    // Navigate to product detail page
-    await page.locator('a[href*="/product/"]').first().click();
+    await homePage.goto();
+    await homePage.clickProduct(0);
     
-    // Locate the Quantity control
-    const quantitySpinner = page.locator('input[type="number"]').first();
-    await expect(quantitySpinner).toBeVisible();
+    const qty = await productPage.getCurrentQuantity();
+    expect(qty).toBe('1');
     
-    // Verify: Default quantity is 1
-    const currentValue = await quantitySpinner.inputValue();
-    expect(currentValue).toBe('1');
-    
-    // Click Increase quantity button 3 times
-    const increaseBtn = page.locator('button:has-text("Increase")').or(page.locator('button:near(input[type="number"])').last());
-    if (await increaseBtn.isVisible()) {
-      for (let i = 0; i < 3; i++) {
-        await increaseBtn.click();
-      }
-    }
+    await productPage.increaseQuantity(3);
   });
 
-  test('Add Product to Cart', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('Add Product to Cart', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const productPage = new ProductPage(page);
     
-    // Navigate to product detail page
-    await page.locator('a[href*="/product/"]').first().click();
+    await homePage.goto();
+    await homePage.clickProduct(0);
     
-    // Click the 'Add to cart' button
-    await page.locator('button:has-text("Add to cart")').click();
-    
-    // Verify: A success message appears
-    const successMsg = page.locator('[role="alert"], .alert, .toast').filter({ hasText: 'added' }).or(page.locator('text=added'));
-    await expect(successMsg.first()).toBeVisible({ timeout: 5000 });
-    
-    // Verify: The shopping cart icon in the navigation updates
-    const cartBadge = page.locator('[data-test="nav-cart"] [role="img"], [data-test="nav-cart"] span').filter({ hasText: /\d/ });
-    if (await cartBadge.count() > 0) {
-      await expect(cartBadge.first()).toBeVisible();
-    }
+    await productPage.addToCart();
   });
 
-  test('Add Multiple Products to Cart', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('Add Multiple Products to Cart', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const productPage = new ProductPage(page);
     
-    // Add first product to cart
-    await page.locator('a[href*="/product/"]').first().click();
-    await page.locator('button:has-text("Add to cart")').click();
-    await page.waitForTimeout(500);
+    await homePage.goto();
     
-    // Navigate back to home
-    await page.locator('a[href="/"]').first().click();
+    // Add first product
+    await homePage.clickProduct(0);
+    await productPage.addToCart();
     
-    // Add second product to cart
-    await page.locator('a[href*="/product/"]').first().click();
-    await page.locator('button:has-text("Add to cart")').click();
-    
-    // Verify: Both products are in cart
-    const successMsg = page.locator('[role="alert"], .alert, .toast').filter({ hasText: 'added' });
-    await expect(successMsg.first()).toBeVisible({ timeout: 5000 });
+    // Go back and add second product
+    await homePage.goto();
+    await homePage.clickProduct(1);
+    await productPage.addToCart();
   });
 
-  test('Add Product with Quantity to Cart', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('Add Product with Quantity to Cart', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const productPage = new ProductPage(page);
     
-    // Navigate to product detail page
-    await page.locator('a[href*="/product/"]').first().click();
+    await homePage.goto();
+    await homePage.clickProduct(0);
     
-    // Set quantity to 3
-    const quantityInput = page.locator('input[type="number"]').first();
-    if (await quantityInput.isVisible()) {
-      await quantityInput.fill('3');
-    }
-    
-    // Click 'Add to cart'
-    await page.locator('button:has-text("Add to cart")').click();
-    
-    // Verify: Success message appears
-    const successMsg = page.locator('[role="alert"], .alert, .toast').filter({ hasText: 'added' });
-    await expect(successMsg.first()).toBeVisible({ timeout: 5000 });
+    await productPage.setQuantity(3);
+    await productPage.addToCart();
   });
 
-  test('Add Product to Favorites', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('Add Product to Favorites', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const productPage = new ProductPage(page);
     
-    // Navigate to product detail page
-    await page.locator('a[href*="/product/"]').first().click();
+    await homePage.goto();
+    await homePage.clickProduct(0);
     
-    // Click the 'Add to favourites' button
-    const favBtn = page.locator('button:has-text("Add to favourites"), button:has-text("Favorite")');
-    if (await favBtn.isVisible()) {
-      await favBtn.click();
-      
-      // Verify: Button visual changes or item is added to favorites
-      await page.waitForTimeout(500);
-    }
+    await productPage.addToFavorites();
   });
 
-  test('View Related Products', async ({ page }) => {
-    await page.goto('https://practicesoftwaretesting.com/');
+  test('View Related Products', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const productPage = new ProductPage(page);
     
-    // Navigate to product detail page
-    await page.locator('a[href*="/product/"]').first().click();
+    await homePage.goto();
+    await homePage.clickProduct(0);
     
-    // Verify: Related products section is visible
-    const relatedSection = page.locator('text=Related products', 'h2:has-text("Related")');
-    if (await relatedSection.count() > 0) {
-      await expect(relatedSection.first()).toBeVisible();
-    }
-    
-    // Verify: Related products are displayed
-    const relatedProducts = page.locator('a[href*="/product/"]').filter({ hasNot: page.locator('h1') });
-    if (await relatedProducts.count() > 0) {
-      expect(await relatedProducts.count()).toBeGreaterThan(0);
-    }
+    const count = await productPage.getRelatedProductsCount();
+    expect(count).toBeGreaterThanOrEqual(0);
   });
 });

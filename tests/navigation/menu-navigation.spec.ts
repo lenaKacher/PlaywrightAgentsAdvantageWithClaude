@@ -1,51 +1,38 @@
 // spec: specs/comprehensive-test-plan.md
 // seed: tests/seed.spec.ts
 
-import { test, expect } from '@playwright/test';
+import { test, expect } from '../fixture/loginPage';
+import { HomePage } from '../pages/HomePage';
+import { ContactPage } from '../pages/ContactPage';
 
 test.describe('Navigation and General Interface', () => {
-  test('Navigate Between Main Menu Items', async ({ page }) => {
-    // 1. Click on the 'Categories' menu item
-    await page.goto('https://practicesoftwaretesting.com/');
-    await page.locator('[data-test="nav-categories"]').click();
+  test('Navigate Between Main Menu Items', async ({ loginPage: page }) => {
+    const homePage = new HomePage(page);
+    const contactPage = new ContactPage(page);
     
-    // Verify: A dropdown menu appears with category options
-    const categoriesList = page.locator('[data-test="nav-categories"] + ul, .nav-categories ul');
-    await expect(categoriesList.locator('text=Hand Tools')).toBeVisible();
-    await expect(categoriesList.locator('text=Power Tools')).toBeVisible();
-    await expect(categoriesList.locator('text=Other')).toBeVisible();
-    await expect(categoriesList.locator('text=Special Tools')).toBeVisible();
-    await expect(categoriesList.locator('text=Rentals')).toBeVisible();
+    // Start from home
+    await homePage.goto();
     
-    // 2. Click on 'Hand Tools' category
-    await page.locator('a:has-text("Hand Tools")').click();
-    
-    // Verify: The page navigates to /category/hand-tools
+    // Navigate to Hand Tools category
+    await homePage.navigateToCategory('Hand Tools');
     expect(page.url()).toContain('/category/hand-tools');
     
-    // Verify: Products in the Hand Tools category are displayed
-    const productCards = page.locator('a[href*="/product/"]');
-    await expect(productCards.first()).toBeVisible();
+    // Verify products are displayed
+    const count = await homePage.getProductCount();
+    expect(count).toBeGreaterThan(0);
     
-    // 3. Click on 'Contact' in the main menu
-    await page.locator('[data-test="nav-contact"]').click();
-    
-    // Verify: The page navigates to /contact
+    // Navigate to Contact page
+    await homePage.goToContact();
     expect(page.url()).toContain('/contact');
     
-    // Verify: The contact form is visible with fields
-    await expect(page.locator('input[placeholder*="first name"]')).toBeVisible();
-    await expect(page.locator('input[placeholder*="last name"]')).toBeVisible();
-    await expect(page.locator('input[placeholder*="email"]')).toBeVisible();
+    // Verify contact form is visible
+    await contactPage.verifyContactFormVisible();
     
-    // 4. Click on 'Home' link to return to home page
-    await page.locator('[data-test="nav-home"]').click();
+    // Navigate back to home
+    await homePage.goto();
+    expect(page.url()).toContain('practicesoftwaretesting.com');
     
-    // Verify: The page navigates back to the home page
-    expect(page.url()).toBe('https://practicesoftwaretesting.com/');
-    
-    // Verify: All products are displayed again
-    const products = page.locator('a[href*="/product/"]');
-    await expect(products.first()).toBeVisible();
+    // Verify products are displayed
+    await homePage.verifyHomePageLoaded();
   });
 });

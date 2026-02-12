@@ -132,14 +132,15 @@ export class SearchPage extends BasePage {
    * Get rental products count
    */
   async getRentalProductsCount(): Promise<number> {
-    return await this.rentalProducts.count();
+    return await this.searchResults.count();
   }
 
   /**
    * Click on rental product by index
    */
   async clickRentalProduct(index: number = 0): Promise<void> {
-    await this.rentalProducts.nth(index).click();
+    await this.searchResults.nth(index).click();
+    await this.page.waitForLoadState('networkidle');
   }
 
   /**

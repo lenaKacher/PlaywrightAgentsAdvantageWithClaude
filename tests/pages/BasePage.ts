@@ -15,7 +15,8 @@ export class BasePage {
    * Navigate to a specific URL path
    */
   async goto(path: string = BASE_URL): Promise<void> {
-    await this.page.goto(path);
+    const url = path.startsWith('http') ? path : `${BASE_URL.replace(/\/$/, '')}${path}`;
+    await this.page.goto(url);
     await this.page.waitForLoadState('networkidle');
   }
 

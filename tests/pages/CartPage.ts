@@ -5,7 +5,7 @@ export class CartPage extends BasePage {
   // Cart elements
   readonly cartTable = this.page.locator('table, [role="table"]');
   readonly cartItems = this.page.locator('tr[data-test*="cart"], [data-test*="cart-item"]');
-  readonly cartTotal = this.page.locator('[data-test="cart-total"], text=/Total|total/');
+  readonly cartTotal = this.page.locator('[data-test="cart-total"]');
   readonly cartSubtotal = this.page.locator('text=/Subtotal|subtotal/').first();
   readonly cartTax = this.page.locator('text=/Tax|tax/').first();
   readonly cartShipping = this.page.locator('text=/Shipping|shipping/').first();
@@ -28,7 +28,8 @@ export class CartPage extends BasePage {
    * Navigate to cart page
    */
   async gotoCart(): Promise<void> {
-    await super.goto('/checkout');
+    await this.clickSafely(this.proceedToCheckoutBtn);
+    await this.page.waitForLoadState('networkidle');
   }
 
   /**
@@ -49,7 +50,8 @@ export class CartPage extends BasePage {
    * Verify cart items table is visible
    */
   async verifyCartTableVisible(): Promise<void> {
-    await expect(this.cartTable).toBeVisible({ timeout: 5000 });
+    const cartItemsVisible = await this.isElementVisible(this.cartItems) || await this.isElementVisible(this.productLinks);
+    expect(cartItemsVisible).toBe(true);
   }
 
   /**

@@ -104,14 +104,14 @@ export class HomePage extends BasePage {
    * Navigate to cart page
    */
   async goToCart(): Promise<void> {
-    await this.clickSafely(this.cartButton);
+    await super.goto('/checkout');
   }
 
   /**
    * Navigate to contact page
    */
   async goToContact(): Promise<void> {
-    await this.clickSafely(this.contactButton);
+    await super.goto('/contact');
   }
 
   /**
